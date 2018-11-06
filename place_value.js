@@ -7,6 +7,27 @@
 
 var STAGE_WIDTH, STAGE_HEIGHT;
 
+var questions = [
+  {
+    number: "112.60",
+    placeValue: "Ones"
+  },
+  {
+    number: "278",
+    placeValue: "Hundreds"
+  },
+  {
+    number: "4859",
+    placeValue: "Thousands"
+  },
+  {
+    number: "12",
+    placeValue: "Tens"
+  }
+];
+
+var counter = 0;
+
 
 /*
  * Initialize the stage and some createJS settings
@@ -34,16 +55,44 @@ function init() {
  */
 function initGraphics() {
 
+  stage.addChild(background);
+
   // Add puzzle pieces to the stage.
   for (var piece of puzzlePieces) {
     stage.addChild(piece);
   }
 
+  // Load first question.
+
+
+  initListeners();
+
   stage.update();
 }
 
 function initListeners() {
+  $(".digit").unbind('click').click(function() {
+    console.log(this);
+    // Remove a random puzzle piece.
+    let index = Math.floor(Math.random() * puzzlePieces.length);
+    createjs.Tween.get(puzzlePieces[index]).to({alpha: 0}, 1000).call(function() {
+      stage.removeChild(puzzlePieces[index]);
+      puzzlePieces.splice(index, 1);
 
+      if (puzzlePieces.length === 0) {
+        endGame();
+      }
+    });
+  });
+}
+
+function start() {
+
+}
+
+function endGame(){
+  $("#number").css("visibility", "hidden");
+  $("#place-value").css("visibility", "hidden");
 }
 
 
@@ -53,12 +102,18 @@ function update() {
 
 //////////////////////// PRELOADJS FUNCTIONS
 var puzzlePieces = [];
+var background;
 
 /*
  * Add files to be loaded here.
  */
 function setupManifest() {
-  manifest = [];
+  manifest = [
+    {
+      src: "images/background.png",
+      id: "background"
+    }
+  ];
 
   // Load puzzle pieces into manifest.
   for (var i = 1; i <= 20; i++) {
@@ -85,6 +140,8 @@ function handleFileLoad(event) {
     // create bitmaps of images
     if (event.item.id.includes("piece")) {
       puzzlePieces.push(new createjs.Bitmap(event.result));
+    } else if (event.item.id == "background") {
+      background = new createjs.Bitmap(event.result);
     }
 
 }
@@ -105,8 +162,8 @@ function loadComplete(event) {
     console.log("Finished Loading Assets");
 
     // ticker calls update function, set the FPS
-    // createjs.Ticker.setFPS(24);
-    // createjs.Ticker.addEventListener("tick", update); // call update function
+    createjs.Ticker.setFPS(24);
+    createjs.Ticker.addEventListener("tick", update); // call update function
 
     stage.update();
     initGraphics();
