@@ -8,26 +8,7 @@
 var STAGE_WIDTH, STAGE_HEIGHT;
 
 var questions = [
-  {
-    number: 112.60,
-    placeValue: "Ones"
-  },
-  {
-    number: 278,
-    placeValue: "Hundreds"
-  },
-  {
-    number: 2010,
-    placeValue: "Thousands"
-  },
-  {
-    number: 12.1,
-    placeValue: "Tens"
-  },
-  {
-    number: 576.745,
-    placeValue: "Hundredths"
-  }
+
 ];
 
 var placeValues = ["Ones", "Tens", "Hundreds", "Thousands", "Ten Thousands", "Hundred Thousands", "Millions", "Billions"]
@@ -48,6 +29,13 @@ function init() {
     stage.mouseEventsEnabled = true;
     stage.enableMouseOver(); // Default, checks the mouse 20 times/second for hovering cursor changes
 
+    // Load questions.
+    var url = new URL(window.location.href);
+    var version = url.searchParams.get("version");
+    $.getJSON("versions/" + version + ".json", (data) => {
+      questions = data;
+    });
+
     setupManifest(); // preloadJS
     startPreload();
 
@@ -62,13 +50,7 @@ function init() {
  */
 function initGraphics() {
 
-  var randomImage = new Image();
-  randomImage.src = "https://source.unsplash.com/460x360/?nature";
-  randomImage.onload = (event) => {
-    var image = event.target;
-    background = new createjs.Bitmap(image);
-    stage.addChildAt(background, 0);
-  }
+  initRandomBackground();
 
   // Add puzzle pieces to the stage.
   for (var piece of puzzlePieces) {
@@ -91,6 +73,18 @@ function initListeners() {
       incorrect();
     }
   });
+}
+
+function initRandomBackground() {
+  stage.removeChild(background);
+  background = null;
+  var randomImage = new Image();
+  randomImage.src = "https://source.unsplash.com/460x360/?nature?" + new Date().getTime();
+  randomImage.onload = (event) => {
+    var image = event.target;
+    background = new createjs.Bitmap(image);
+    stage.addChildAt(background, 0);
+  }
 }
 
 function correct() {
@@ -121,6 +115,7 @@ function start() {
 function restart() {
   counter = 0;
   updateQuestion();
+  initRandomBackground();
 
   for (var piece of removedPieces) {
     puzzlePieces.push(piece);
@@ -149,9 +144,10 @@ function updateQuestion() {
   var currentQuestion = questions[counter];
 
   var numberHTML = "";
-  var numberString = currentQuestion.number.toString();
 
   var correctIndex = -1; // ?
+
+  var numberString = currentQuestion.number.toString();
 
   // Determine correct answer index based on place value string.
   if (numberString.includes('.')) {
@@ -174,16 +170,23 @@ function updateQuestion() {
   }
 
   // Load HTML number div.
-  var characters = numberString.split("");
+  var characters = numberString.replace(/\B(?=(\d{3})+(?!\d))/g, " ").split("");
+  var spaceOffset = 0;
   for (var i = 0; i < characters.length; i++) {
     if ('0123456789'.indexOf(characters[i]) !== -1) {
-      if (i === correctIndex) {
+      if (i - spaceOffset === correctIndex) {
         numberHTML += '<span class="digit" id="correct">' + characters[i] + '</span>';
+
       } else {
         numberHTML += '<span class="digit">' + characters[i] + '</span>';
       }
 
     } else {
+
+      if (characters[i] === ' ') {
+        spaceOffset++;
+      }
+
       numberHTML += characters[i];
     }
   }
