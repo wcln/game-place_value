@@ -48,11 +48,12 @@ div#number {
 	border: 1px solid black;
 	font-size: 28px;
 	display: inline-block;
+	visibility: hidden;
 }
 
 span.digit {
 	background-color: grey;
-	margin: 0 -2px 0 0;
+	margin: 0 2px 0 0;
 	display: inline-block;
 	width: 20px;
 	background: linear-gradient(to bottom, #e2e2e2, #d8d8d8);
@@ -86,6 +87,7 @@ div#place-value {
 	background: linear-gradient(to bottom, white, #e2e2e2);
 	border: 1px solid black;
 	margin: 0 100px 50px 100px;
+	visibility: hidden;
 }
 
 div#place-value > p {
@@ -94,4 +96,22 @@ div#place-value > p {
 	text-shadow: 1px 1px #e2e2e2;
 	margin: 0;
 	padding: 10px;
+}
+
+div#restart {
+	visibility: hidden;
+	margin-top: 150px;
+}
+
+div#restart button {
+	background-color: #707070;
+  border: none;
+  color: white;
+  padding: 10px 15px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 5px;
+  font-size: 16px;
+	cursor: pointer;
 }

@@ -9,25 +9,32 @@ var STAGE_WIDTH, STAGE_HEIGHT;
 
 var questions = [
   {
-    number: "112.60",
+    number: 112.60,
     placeValue: "Ones"
   },
   {
-    number: "278",
+    number: 278,
     placeValue: "Hundreds"
   },
   {
-    number: "4859",
+    number: 2010,
     placeValue: "Thousands"
   },
   {
-    number: "12",
+    number: 12.1,
     placeValue: "Tens"
+  },
+  {
+    number: 576.745,
+    placeValue: "Hundredths"
   }
 ];
 
-var counter = 0;
+var placeValues = ["Ones", "Tens", "Hundreds", "Thousands", "Ten Thousands", "Hundred Thousands", "Millions", "Billions"]
+var decimalPlaceValues = ["Tenths", "Hundredths", "Thousandths", "Ten-thousandths", "Hundred-thousandths", "Millionths"];
 
+var counter = 0;
+var removedPieces = [];
 
 /*
  * Initialize the stage and some createJS settings
@@ -55,7 +62,13 @@ function init() {
  */
 function initGraphics() {
 
-  stage.addChild(background);
+  var randomImage = new Image();
+  randomImage.src = "https://source.unsplash.com/460x360/?nature";
+  randomImage.onload = (event) => {
+    var image = event.target;
+    background = new createjs.Bitmap(image);
+    stage.addChildAt(background, 0);
+  }
 
   // Add puzzle pieces to the stage.
   for (var piece of puzzlePieces) {
@@ -63,38 +76,125 @@ function initGraphics() {
   }
 
   // Load first question.
+  updateQuestion();
 
-
-  initListeners();
+  $("#number, #place-value").css("visibility", "visible");
 
   stage.update();
 }
 
 function initListeners() {
   $(".digit").unbind('click').click(function() {
-    console.log(this);
-    // Remove a random puzzle piece.
-    let index = Math.floor(Math.random() * puzzlePieces.length);
-    createjs.Tween.get(puzzlePieces[index]).to({alpha: 0}, 1000).call(function() {
-      stage.removeChild(puzzlePieces[index]);
-      puzzlePieces.splice(index, 1);
-
-      if (puzzlePieces.length === 0) {
-        endGame();
-      }
-    });
+    if (this.id === "correct") {
+      correct();
+    } else {
+      incorrect();
+    }
   });
+}
+
+function correct() {
+  counter++;
+  createjs.Sound.play("correct");
+  // Remove a random puzzle piece.
+  let index = Math.floor(Math.random() * puzzlePieces.length);
+  createjs.Tween.get(puzzlePieces[index]).to({alpha: 0}, 100).call(function() {
+    stage.removeChild(puzzlePieces[index]);
+    removedPieces.push(puzzlePieces[index]);
+    puzzlePieces.splice(index, 1);
+    if (puzzlePieces.length === 0 || counter === questions.length) {
+      endGame();
+    } else {
+      updateQuestion();
+    }
+  });
+}
+
+function incorrect() {
+  createjs.Sound.play("incorrect");
 }
 
 function start() {
 
 }
 
-function endGame(){
-  $("#number").css("visibility", "hidden");
-  $("#place-value").css("visibility", "hidden");
+function restart() {
+  counter = 0;
+  updateQuestion();
+
+  for (var piece of removedPieces) {
+    puzzlePieces.push(piece);
+  }
+  removedPieces = [];
+  for (var piece of puzzlePieces) {
+    piece.alpha = 1;
+    stage.addChild(piece);
+  }
+
+  $("#restart").css("visibility", "hidden");
+  $("#place-value").css("display", "block");
+  $("#number").css("display", "inline-block");
 }
 
+function endGame(){
+  // Ensure all puzzle pieces have been removed.
+  for (var piece of puzzlePieces) {
+    stage.removeChild(piece);
+  }
+
+  $("#place-value, #number").fadeOut(1000, "swing", function() { $("#restart").css("visibility", "visible"); }).css("display", "none");
+}
+
+function updateQuestion() {
+  var currentQuestion = questions[counter];
+
+  var numberHTML = "";
+  var numberString = currentQuestion.number.toString();
+
+  var correctIndex = -1; // ?
+
+  // Determine correct answer index based on place value string.
+  if (numberString.includes('.')) {
+    if (decimalPlaceValues.includes(currentQuestion.placeValue)) {
+      let placeValueIndex = decimalPlaceValues.indexOf(currentQuestion.placeValue);
+      correctIndex = numberString.indexOf('.') + 1 + placeValueIndex;
+    } else if (placeValues.includes(currentQuestion.placeValue)) {
+      let placeValueIndex = placeValues.indexOf(currentQuestion.placeValue);
+      correctIndex = numberString.indexOf('.') - 1 - placeValueIndex;
+    } else {
+      alert("Invalid place value supplied.");
+    }
+  } else {
+    if (placeValues.includes(currentQuestion.placeValue)) {
+      let placeValueIndex = placeValues.indexOf(currentQuestion.placeValue);
+      correctIndex = numberString.length - 1 - placeValueIndex;
+    } else {
+      alert("Invalid place value supplied.");
+    }
+  }
+
+  // Load HTML number div.
+  var characters = numberString.split("");
+  for (var i = 0; i < characters.length; i++) {
+    if ('0123456789'.indexOf(characters[i]) !== -1) {
+      if (i === correctIndex) {
+        numberHTML += '<span class="digit" id="correct">' + characters[i] + '</span>';
+      } else {
+        numberHTML += '<span class="digit">' + characters[i] + '</span>';
+      }
+
+    } else {
+      numberHTML += characters[i];
+    }
+  }
+
+
+
+  $("#number").html(numberHTML);
+  $("#place-value > p").html(currentQuestion.placeValue);
+
+  initListeners();
+}
 
 function update() {
   stage.update();
@@ -110,8 +210,12 @@ var background;
 function setupManifest() {
   manifest = [
     {
-      src: "images/background.png",
-      id: "background"
+      src: "sounds/correct.mp3",
+      id: "correct"
+    },
+    {
+      src: "sounds/wrong.mp3",
+      id: "incorrect"
     }
   ];
 
@@ -140,10 +244,7 @@ function handleFileLoad(event) {
     // create bitmaps of images
     if (event.item.id.includes("piece")) {
       puzzlePieces.push(new createjs.Bitmap(event.result));
-    } else if (event.item.id == "background") {
-      background = new createjs.Bitmap(event.result);
     }
-
 }
 
 function loadError(evt) {
