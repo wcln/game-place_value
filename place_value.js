@@ -170,7 +170,7 @@ function updateQuestion() {
   }
 
   // Load HTML number div.
-  var characters = numberString.replace(/\B(?=(\d{3})+(?!\d))/g, " ").split("");
+  var characters = numberWithSpaces(currentQuestion.number).split("");
   var spaceOffset = 0;
   for (var i = 0; i < characters.length; i++) {
     if ('0123456789'.indexOf(characters[i]) !== -1) {
@@ -288,4 +288,10 @@ function shuffle(a) {
         a[j] = x;
     }
     return a;
+}
+
+const numberWithSpaces = (x) => {
+  var parts = x.toString().split(".");
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  return parts.join(".");
 }
