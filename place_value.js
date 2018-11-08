@@ -11,7 +11,7 @@ var questions = [
 
 ];
 
-var placeValues = ["Ones", "Tens", "Hundreds", "Thousands", "Ten Thousands", "Hundred Thousands", "Millions", "Billions"]
+var placeValues = ["Ones", "Tens", "Hundreds", "Thousands", "Ten Thousands", "Hundred Thousands", "Millions", "Ten Millions", "Hundred Millions", "Billions"]
 var decimalPlaceValues = ["Tenths", "Hundredths", "Thousandths", "Ten-thousandths", "Hundred-thousandths", "Millionths"];
 
 var counter = 0;
