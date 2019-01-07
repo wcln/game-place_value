@@ -126,7 +126,7 @@ function restart() {
     stage.addChild(piece);
   }
 
-  $("#restart").css("visibility", "hidden");
+  $("#restart").css("display", "none");
   $("#place-value").css("display", "block");
   $("#number").css("display", "inline-block");
 }
@@ -137,7 +137,7 @@ function endGame(){
     stage.removeChild(piece);
   }
 
-  $("#place-value, #number").fadeOut(1000, "swing", function() { $("#restart").css("visibility", "visible"); }).css("display", "none");
+  $("#place-value, #number").fadeOut(1000, "swing", function() { $("#restart").css("display", "block"); }).css("display", "none");
 }
 
 function updateQuestion() {
