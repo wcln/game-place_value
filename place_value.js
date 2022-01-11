@@ -1,7 +1,7 @@
 /**
- * BCLearningNetwork.com
+ * wcln.ca
  * Place Value
- * Colin Bernard
+ * Colin Perepelken
  * November 2018
  */
 
