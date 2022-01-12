@@ -1,0 +1,82 @@
+[
+  {
+    "number": 5.34,
+    "placeValue": "Tenths"
+  },
+  {
+    "number": 213.412,
+    "placeValue": "Hundredths"
+  },
+  {
+    "number": 1347.3982,
+    "placeValue": "Thousandths"
+  },
+  {
+    "number": 25374.23,
+    "placeValue": "Ones"
+  },
+  {
+    "number": 757.643,
+    "placeValue": "Hundredths"
+  },
+  {
+    "number": 197845.6246,
+    "placeValue": "Thousands"
+  },
+  {
+    "number": 1335.4792,
+    "placeValue": "Tens"
+  },
+  {
+    "number": 56.3664,
+    "placeValue": "Tenths"
+  },
+  {
+    "number": 96.42664,
+    "placeValue": "Thousandths"
+  },
+  {
+    "number": 35987.4928,
+    "placeValue": "Hundreds"
+  },
+  {
+    "number": 24.534,
+    "placeValue": "Tenths"
+  },
+  {
+    "number": 12643,
+    "placeValue": "Ones"
+  },
+  {
+    "number": 141276.001,
+    "placeValue": "Ten Thousands"
+  },
+  {
+    "number": 5379.0587,
+    "placeValue": "Hundredths"
+  },
+  {
+    "number": 7576.43,
+    "placeValue": "Hundreds"
+  },
+  {
+    "number": 3845.0246,
+    "placeValue": "Thousandths"
+  },
+  {
+    "number": 1897.643,
+    "placeValue": "Tenths"
+  },
+  {
+    "number": 297584.34,
+    "placeValue": "Ten Thousands"
+  },
+  {
+    "number": 9642.37,
+    "placeValue": "Ones"
+  },
+  {
+    "number": 314.6984,
+    "placeValue": "Hundredths"
+  }
+]
